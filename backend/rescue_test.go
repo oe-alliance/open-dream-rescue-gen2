@@ -46,6 +46,49 @@ func TestSingleAndIncomplete(t *testing.T) {
 		t.Fatal("ambiguous layout allowed")
 	}
 }
+
+func TestDM9x0KernelVersionLabel(t *testing.T) {
+	legacy := "kernel=/dev/3.14 root=" + dataDev + " rootsubdir=linuxrootfs6\n"
+	if model != "dm900" && model != "dm920" {
+		if _, err := parseSlot(6, []byte(legacy)); err == nil {
+			t.Fatal("accepted DM9x0 kernel label on", model)
+		}
+		return
+	}
+	dir := t.TempDir()
+	one := "kernel=" + p1 + " root=" + rootDev + " rootsubdir=linuxrootfs1\n"
+	for name, contents := range map[string]string{"STARTUP": one, "STARTUP_1": one, "STARTUP_6": legacy} {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte(contents), 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	l, err := layoutAt(dir)
+	if err != nil || !l.Multi || l.Selected != 1 || len(l.Slots) != 2 || l.Slots[1].Device != dataDev {
+		t.Fatal(l, err)
+	}
+	if err = selectSlot(dir, l.Slots[1]); err != nil {
+		t.Fatal(err)
+	}
+	current, err := os.ReadFile(filepath.Join(dir, "STARTUP"))
+	if err != nil || string(current) != legacy {
+		t.Fatal("STARTUP must retain the original slot contents", err)
+	}
+	l, err = layoutAt(dir)
+	if err != nil || l.Selected != 6 {
+		t.Fatal(l, err)
+	}
+	for _, invalid := range []string{
+		strings.Replace(legacy, "/dev/3.14", "/dev/3.14.1", 1),
+		strings.Replace(legacy, "/dev/3.14", "/dev/mmcblk0p3", 1),
+		strings.Replace(legacy, dataDev, "/dev/sda1", 1),
+		strings.Replace(legacy, "linuxrootfs6", "linuxrootfs1", 1),
+		legacy + "kernel=" + p1,
+	} {
+		if _, err := parseSlot(6, []byte(invalid)); err == nil {
+			t.Fatal("accepted unsupported STARTUP:", invalid)
+		}
+	}
+}
 func imageZIP(t *testing.T, d, model string) string {
 	k := make([]byte, 256)
 	binary.LittleEndian.PutUint32(k[36:], 0x016f2818)

@@ -50,7 +50,10 @@ func parseSlot(id int, data []byte) (Slot, error) {
 		}
 		switch k {
 		case "kernel":
-			if v != p1 {
+			// Some DM9x0 STARTUP files name the shared kernel by version.
+			// This field is never used as a device for flashing.
+			versionLabel := (model == "dm900" || model == "dm920") && v == "/dev/3.14"
+			if v != p1 && !versionLabel {
 				return s, fmt.Errorf("Unsupported kernel %s", v)
 			}
 		case "root":
