@@ -57,6 +57,19 @@ sh tools/build-from-oe.sh
 
 Bei abweichender Verzeichnisstruktur überschreiben `ODR_KERNEL_WORK`, `ODR_KERNEL_SOURCE`, `ODR_KERNEL_CONFIG` und `ODR_APP_SYSROOT` die hergeleiteten Pfade. Das Zielverzeichnis muss leer sein. Nach einem abgebrochenen Build ein neues Verzeichnis wählen. Die Kernel-Objekte und die geänderte Kopie der Konfiguration landen unter `$ODR_OUT/kernel`.
 
+### Separat mit BitBake bauen
+
+Das beiliegende Offline-Rezept `recipes/odr-gen2_1.0.bb` verwendet denselben Modellbuild. Es benötigt dieselben externen Eingaben wie oben. Es lässt sich unabhängig von der normalen OpenATV-Imageproduktion starten. Nach dem Setzen von `ODR_MODEL`, `OE_TMP`, `ODR_DRIVER_DIR` und `ODR_MUSL`:
+
+```sh
+export BITBAKE_ROOT=/home/oe1/atv8.1/build-enviroment/bitbake
+export ODR_BUILD=$(mktemp -d "$HOME/odr-gen2-bb.XXXXXXXX")
+sh tools/run-bitbake.sh
+(cd "$ODR_BUILD/deploy/$ODR_MODEL" && sha256sum -c ODR*.BIN.sha256)
+```
+
+Das Rezept legt seine eigenen Arbeitsdaten unter `$ODR_BUILD/tmp` an. Rescue-Datei, SHA-256 und der vorbereitete Ordner `bootmenu/` landen unter `$ODR_BUILD/deploy/$ODR_MODEL/`. Der Shell-Build verwendet stattdessen direkt `$ODR_OUT`.
+
 ## 4. Ergebnis prüfen und bereitstellen
 
 ```sh
