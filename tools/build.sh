@@ -40,7 +40,13 @@ export ARCH CROSS_COMPILE="$triple-"
 grep -qx "CONFIG_DREAMBOX_${upper}=y" "$config"
 grep -qx "CONFIG_LOCALVERSION=\"-$ODR_MODEL\"" "$config"
 server="$out/odr-server"
-(cd "$src/backend"; GO111MODULE=off go test -tags "$ODR_MODEL"; CGO_ENABLED=0 GO111MODULE=off GOOS=linux GOARCH="$goarch" GOARM=7 GOMIPS=softfloat go build -tags "$ODR_MODEL" -trimpath -ldflags='-s -w -buildid=' -o "$server" .)
+(
+    cd "$src/backend"
+    export GO111MODULE=off GOPROXY=off GOTOOLCHAIN=local
+    if [ "${ODR_BACKEND_TESTED:-0}" != 1 ]; then go test -tags "$ODR_MODEL"; fi
+    CGO_ENABLED=0 GOOS=linux GOARCH="$goarch" GOARM=7 GOMIPS=softfloat \
+        go build -tags "$ODR_MODEL" -trimpath -ldflags='-s -w -buildid=' -o "$server" .
+)
 echo "a9a118bbe84d8764da0ea0d28b3ab3fae8477fc7e4085d90102b8596fc7c75e4  $ODR_MUSL" | sha256sum -c -
 cc="${CROSS_COMPILE}gcc"
 if [ "$ARCH" = mips ]; then
