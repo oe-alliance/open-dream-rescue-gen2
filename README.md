@@ -30,6 +30,8 @@ Die Werksdateien liegen in der vorbereiteten lokalen Arbeitskopie außerhalb des
 (cd vendor/factory && sha256sum -c ../factory.sha256)
 ```
 
+**Treibersatz aus einem vorhandenen OE-Build beziehen:** In den zu dieser Maschine gehörenden `dreambox-dvb-modules`-Rezepten stehen Archivname, Treiberdatum und Prüfsumme. Häufig enthält das `image/` des Treiber-WORKDIR bereits `lib/modules/<release>/extra` samt `LICENSE`. Ist der WORKDIR aufgeräumt, das passende Originalpaket aus dem OE-Downloadcache in ein eigenes Verzeichnis auspacken. Mit `find /pfad/zum/paket -name bcm7439.ko` (DM900/920), `bcm7435.ko` (DM7080/820) oder `bcm73625.ko` (DM52x) lässt sich das genaue `extra/` für `ODR_DRIVER_DIR` bestimmen.
+
 ## 3. Rescue bauen
 
 Beispiel für eine **DM920** auf dem vorhandenen Builder. Die Pfade für den entpackten Treibersatz und das Downloadarchiv durch die eigenen ersetzen:
@@ -69,6 +71,7 @@ sh tools/run-bitbake.sh
 ```
 
 Das Rezept legt seine eigenen Arbeitsdaten unter `$ODR_BUILD/tmp` an. Rescue-Datei, SHA-256 und der vorbereitete Ordner `bootmenu/` landen unter `$ODR_BUILD/deploy/$ODR_MODEL/`. Der Shell-Build verwendet stattdessen direkt `$ODR_OUT`.
+Die Go-Tests mit lokalem HTTP-Testserver laufen in der separaten Task `do_check_backend`. Der Compile-Schritt ist netzwerkisoliert. Go verwendet nur die Standardbibliothek und lädt keine Module nach.
 
 ## 4. Ergebnis prüfen und bereitstellen
 
