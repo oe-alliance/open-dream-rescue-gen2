@@ -35,6 +35,9 @@ do_deploy() {
     cd "${DEPLOY_DIR_IMAGE}"
     sha256sum -c ODR*.BIN.sha256
 }
+do_build() {
+    test -s "${DEPLOY_DIR_IMAGE}/bootmenu/${ODR_MODEL}/rescue"
+}
 addtask check_backend before do_compile
 addtask compile after do_check_backend before do_deploy
 addtask deploy after do_compile before do_build
