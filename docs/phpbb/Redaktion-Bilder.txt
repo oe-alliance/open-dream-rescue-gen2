@@ -1,0 +1,26 @@
+Open Dream Rescue 1.0 für Gen2 – phpBB-Veröffentlichung
+
+Betreff DE
+Open Dream Rescue 1.0 für DM52x, DM7080, DM820, DM900 und DM920
+
+Subject EN
+Open Dream Rescue 1.0 for DM52x, DM7080, DM820, DM900 and DM920
+
+Für jede Sprache einen eigenen Beitrag anlegen. Den Inhalt der entsprechenden
+TXT-Datei mit aktiviertem BBCode einfügen. Die drei PNGs aus images als
+Anhänge hochladen und an den kursiven Bildplatzhaltern „Im Beitrag anzeigen“
+wählen. Den Platzhalter anschließend entfernen und die Beitragsvorschau öffnen.
+
+01-overview.png       DM920 mit Beispielslots, Upload und Onlinekatalog
+02-choose-slot.png    DM920 mit geladenem DreamOS-Image und Zielslot 2
+03-nand-backup.png    DM525 mit Auswahl zwischen Image- und Einstellungssicherung
+
+Die PNGs zeigen die Gen2-Weboberfläche mit anonymen Beispieldaten. Es sind
+Browseransichten, keine Aufnahmen von HDMI oder von einem Flashvorgang.
+Dieselben Bilder passen in beide Beiträge.
+
+Veröffentlichung abgeglichen mit oe-alliance/bootmenu, Stand 04.11.2026
+https://github.com/oe-alliance/bootmenu/tree/87628155bdc6cb9191e263aa7d202ffac4c8d8ad
+Für dm520, dm7080, dm820, dm900 und dm920 waren rescue, das referenzierte
+Binary und images vorhanden. Modellunterstützung und Rescue-Prüfsummen
+stimmen mit dem öffentlichen install-odr.sh dieses Stands überein.

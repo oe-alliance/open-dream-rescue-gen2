@@ -1,0 +1,7 @@
+The HDMI renderer and its 4-bit Roboto glyphs are adapted from the ODR
+Dreambox One/Two renderer and oe-alliance/dreambox-bootmenu, commit
+e951143d33d2b7a16c2c781e77bae8186a8f34df. Copyright OE-Alliance 2026.
+The renderer is licensed under GPL-3.0-only. The Roboto glyphs are under
+Apache-2.0. Both license texts are included in licenses/.
+
+fonts/lcdfont.h is the 6-by-8 font from the Dream recovery-ui source.

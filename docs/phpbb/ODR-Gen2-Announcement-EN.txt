@@ -1,0 +1,47 @@
+[size=150][b]Open Dream Rescue 1.0 for Gen2 Dreamboxes[/b][/size]
+
+Open Dream Rescue (ODR) brings a new rescue loader to the older Broadcom Dreamboxes. If your TV image stops booting, you can still enter rescue mode. On the TV, use the Dream remote to start an installed image or press [b]INFO[/b] for receiver details. To install or back up an image, open the web interface on a computer, tablet or phone. All menus are in English.
+
+[b]Which receivers are supported?[/b]
+[list]
+[*][b]DM900, DM920, DM7080 and DM820[/b] – ODR detects an existing multiboot setup from its STARTUP files and lets you choose a destination slot. On a single-image system, the destination is the internal image.
+[*][b]DM520, DM525 and DM520mini[/b] – These receivers share one rescue build. ODR installs a single image in internal NAND flash. External USB multiboot slots are outside the scope of this rescue.
+[/list]
+[i]Image 1 – Home screen with start, upload and download options (01-overview.png).[/i]
+
+[b]Upgrade from the original rescue loader[/b]
+
+Boot your normal DreamOS or community image, connect the receiver to your home network by Ethernet, and log in as [b]root[/b] over Telnet or SSH. Paste this command to download the shared installer from GitHub and run it on the receiver:
+[code]wget -O /tmp/install-odr.sh https://raw.githubusercontent.com/oe-alliance/bootmenu/master/install-odr.sh && sh /tmp/install-odr.sh[/code]
+If your image uses curl:
+[code]curl -fL https://raw.githubusercontent.com/oe-alliance/bootmenu/master/install-odr.sh -o /tmp/install-odr.sh && sh /tmp/install-odr.sh[/code]
+To check first without writing anything, add [b]--check[/b] at the end of either line. The installer identifies the receiver, downloads the matching rescue and verifies the file. At [b]Apply this plan?[/b], type [b]y[/b] to proceed. Pressing Enter cancels. The installer backs up the current rescue, writes ODR and reads it back to verify it. Keep the power connected until it reports success. Your installed TV image stays in place.
+
+Copy [b]recovery.bin[/b] and [b]SHA256SUMS[/b] from the new subfolder of [b]/home/root/odr-backups/[/b] to your computer. These files back up the previous rescue loader. Images and settings have their own backup options.
+
+If an older DreamOS image reports an HTTPS error, check the receiver’s date and time, then try the other download command. You can also download the [url=https://github.com/oe-alliance/bootmenu/blob/master/install-odr.sh]raw installer file[/url] on a computer, copy it to [b]/tmp/install-odr.sh[/b] on the receiver and run [b]sh /tmp/install-odr.sh --check[/b]. The receiver still needs a working HTTPS connection to GitHub to fetch the rescue itself.
+
+[b]Start ODR and install an image[/b]
+
+The installer leaves the receiver running. If your installed image provides [b]to-the-rescue[/b], run it to reboot directly into rescue. Alternatively, shut down the receiver and hold the front power/standby button while switching it on until rescue mode appears. On the DM7080, keep holding the button at “Enter setup?”. Open the [b]http://[/b] address shown on the TV in a browser on the same network.
+
+[list=1]
+[*]Choose [b]Upload an image → Choose file[/b] for a local file or [b]Download an image → Browse images[/b] for the online catalogue. Select an image for your model. You can use compatible team ZIPs and DreamOS root filesystem archives as supplied. For OpenATV on the DM52x family, use the [b]_flash.zip[/b] containing the kernel and UBI image.
+[*]After the transfer, choose the destination slot on a multiboot system. On a single-image receiver, confirm the internal destination. ODR erases the old contents of that destination before writing the image.
+[*]After a successful installation, you can start the new image. If flashing fails after erasing has begun, install a complete image in that destination successfully before trying to boot it.
+[/list]
+[i]Image 2 – Choosing a destination after loading an image, here slot 2 for DreamOS (02-choose-slot.png).[/i]
+
+[b]Multiboot users: keep OpenATV 8 or newer in slot 1[/b]
+
+On the DM900, DM920, DM7080 and DM820 all slots share one kernel. Slot 1 also supplies the matching drivers. To run DreamOS alongside OpenATV, install DreamOS in [b]slot 2 or higher[/b]. Flashing a guest slot preserves the shared kernel. To set up multiboot for the first time, use a compatible Enigma2 image.
+
+To install DreamOS as a single image in [b]slot 1[/b], you must explicitly accept the warning. ODR then writes the DreamOS kernel and removes the multiboot startup configuration. Guest images stay on the receiver, but can no longer boot as slots. The separate [b]Maintenance → Remove multiboot[/b] command keeps slot 1 and [b]deletes[/b] the configured guest images and STARTUP files. Back up any guest images you want to keep first.
+
+[b]Backups, updates and feedback[/b]
+
+Under [b]Maintenance → Backups[/b], download a full image or just the settings to your computer. On the DM52x, the backup streams directly to the browser. Let the download finish. Future ODR updates are available under [b]Maintenance → Device firmware[/b].
+
+[i]Image 3 – Full image and settings backup options on a DM525 (03-nand-backup.png).[/i]
+
+If an image is missing from the download catalogue or its link is broken, report the model, image name, link and message under [b]Details[/b] in the [url=https://github.com/oe-alliance/bootmenu/issues]issue tracker[/url]. Image teams can submit a pull request for the [b]images[/b] file in their receiver’s directory in [url=https://github.com/oe-alliance/bootmenu]oe-alliance/bootmenu[/url]. If flashing fails, please also include the destination (internal image or slot number) and the exact error message.

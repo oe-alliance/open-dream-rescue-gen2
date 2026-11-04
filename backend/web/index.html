@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Open Dream Rescue</title>
+  <script>
+    (() => {
+      const key = 'odr.appearance';
+      const system = window.matchMedia('(prefers-color-scheme: dark)');
+      const valid = value => value === 'dark' || value === 'light' ? value : 'system';
+      let choice = 'system';
+      try { choice = valid(localStorage.getItem(key)); } catch {}
+      function apply() {
+        document.documentElement.dataset.theme = choice === 'system' ? (system.matches ? 'dark' : 'light') : choice;
+      }
+      apply();
+      if (system.addEventListener) system.addEventListener('change', apply);
+      else system.addListener(apply);
+      document.addEventListener('DOMContentLoaded', () => {
+        const select = document.getElementById('appearance');
+        select.value = choice;
+        select.addEventListener('change', () => {
+          choice = valid(select.value);
+          apply();
+          try {
+            if (choice === 'system') localStorage.removeItem(key);
+            else localStorage.setItem(key, choice);
+          } catch {}
+        });
+        window.addEventListener('storage', event => {
+          if (event.key !== key && event.key !== null) return;
+          select.value = choice = valid(event.newValue);
+          apply();
+        });
+      });
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css?v=4">
+  <script type="module" src="app.js?v=6"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="topbar"><a class="brand" href="#home"><span class="brand-symbol" aria-hidden="true">o.</span>ODR <span>Open Dream Rescue</span></a><nav aria-label="Main navigation"><a href="#home">Overview</a><a href="#maintenance">Maintenance</a><button id="restart" class="nav-button" type="button">Restart</button></nav><span class="connection" id="connection">Connecting …</span>
+    <label class="appearance">
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 2a6 6 0 0 1 0 12z" fill="currentColor"/></svg>
+      <select id="appearance" aria-label="Appearance" title="Appearance"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
+    </label>
+  </header>
+  <div id="operation-banner" class="mode-banner" hidden><span></span> <a href="#job">View operation</a></div>
+  <main id="main" tabindex="-1"><p class="loading">Loading device information …</p></main>
+  <div id="notice" role="status" aria-live="polite"></div>
+  <footer><span>ODR · Open Dream Rescue</span><span id="device-model">Dreambox</span></footer>
+  <dialog id="confirm-dialog" aria-labelledby="dialog-title"><form method="dialog"><h2 id="dialog-title"></h2><div id="dialog-body"></div><div class="actions"><button value="cancel" class="secondary">Cancel</button><button id="dialog-accept" value="confirm">Confirm</button></div></form></dialog>
+  <noscript>Enable JavaScript to use this interface. No changes have been made to the box.</noscript>
+</body>
+</html>
